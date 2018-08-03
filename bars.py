@@ -1,74 +1,11 @@
 import json
-
-
-def load_data(filepath):
-    pass
-
-
-def get_biggest_bar(data):
-    pass
-
-
-def get_smallest_bar(data):
-    pass
-
-
-def get_closest_bar(data, longitude, latitude):
-    pass
-
-
-if __name__ == '__main__':
-    pass
-
-
-
-import json
-import requests
-
-#данные с сайта мос
-api_key = 'cd3e37fff386243eb88f39065816dacf'
-ref = 'https://apidata.mos.ru/v1/features/1796?api_key={}'.format(api_key)
-
-data = requests.get(ref).json()
-print(len(data['features']))
-print(data['features'][0])
-
-#запись json
-with open ('bars.json', 'w') as f:
-    json.dump(data,f)
-
-#чтение json
-with open('bars.json', 'r') as f:
-    data = json.load(f)
-
-
-#инфо по барам
-
-data['features'][2]['properties']['Attributes']['Name']
-
-bars = { x ['properties']['Attributes']['Name'] : x ['properties']['Attributes']['SeatsCount'] for x in data['features']}
- (min(bars, key=lambda k: bars[k]))
- (max(bars, key=lambda k: bars[k]))
-
-
-print (data['features'][2]['geometry']['coordinates'])
-
-
-x = input()
-longitude, latitude = map(float, input().split())
-
-import json
-import requests
-from math import sqrt
 import argparse
+import math
 
-#считывание инфы
 def load_data(filepath):
     with open(filepath, 'r') as f:
         data = json.load(f)
     return data
-#print (load_data('bars.json'))
-
 
 def get_biggest_bar(data):
     biggest_bar = min(data['features'], key=lambda k: k['properties']['Attributes']['SeatsCount'])
@@ -84,6 +21,19 @@ def get_distance(bar, longitude, latitude):
     bar_long = bar['geometry']['coordinates'][0]
     bar_lat = bar['geometry']['coordinates'][1]
     return sqrt((bar_long - longitude)**2+(bar_lat-latitude)**2)
+def get_distance(bar, longitude, latitude):
+    bar_long = bar['geometry']['coordinates'][0]
+    bar_lat = bar['geometry']['coordinates'][1]
+    radius = 6371 # km
+
+    dlat = math.radians(bar_lat-latitude)
+    dlon = math.radians(bar_long-longitude)
+    a = math.sin(dlat/2) * math.sin(dlat/2) + math.cos(math.radians(latitude)) \
+        * math.cos(math.radians(bar_lat)) * math.sin(dlon/2) * math.sin(dlon/2)
+    c = 2 * math.atan2(math.sqrt(a), math.sqrt(1-a))
+    d = radius * c
+
+    return d
 
 def get_closest_bar(data, longitude, latitude):
     closest_bar = min(data['features'], key=lambda k: get_distance(k, longitude, latitude))
@@ -97,12 +47,14 @@ def parse_args():
     return args
 
 if __name__ == '__main__':
-    #data = load_data(parse_args())
-    data = load_data('bars.json')
+    data = load_data(parse_args())
     biggest = get_biggest_bar(data)
+    print('Самый вместительный бар:', biggest )
     smallest = get_smallest_bar(data)
-    longitude, latitude = map(float, input().split())
+    print('Бар с наименьшим количеством посадочных мест:', smallest )
+    print('Чтобы найти ближейший бар укажите Ваши координаты')
+    longitude = float(input('Введите значение долготы:'))
+    latitude = float(input('Введите значение широты:'))
+    #longitude, latitude = map(float(input('Введите координаты: долгота, широта')).split())
     closest = get_closest_bar(data,longitude, latitude)
-    print(closest)
-
-
+    print('Ближайший к Вам бар:', closest)
