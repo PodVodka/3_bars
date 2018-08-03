@@ -8,7 +8,7 @@ def load_data(filepath):
     return data
 
 def get_biggest_bar(data):
-    biggest_bar = min(data['features'], key=lambda k: k['properties']['Attributes']['SeatsCount'])
+    biggest_bar = max(data['features'], key=lambda k: k['properties']['Attributes']['SeatsCount'])
     return biggest_bar['properties']['Attributes']['Name']
 
 
@@ -16,11 +16,6 @@ def get_smallest_bar(data):
     smallest_bar = min(data['features'], key=lambda k: k['properties']['Attributes']['SeatsCount'])
     return smallest_bar['properties']['Attributes']['Name']
 
-def get_distance(bar, longitude, latitude):
-
-    bar_long = bar['geometry']['coordinates'][0]
-    bar_lat = bar['geometry']['coordinates'][1]
-    return sqrt((bar_long - longitude)**2+(bar_lat-latitude)**2)
 def get_distance(bar, longitude, latitude):
     bar_long = bar['geometry']['coordinates'][0]
     bar_lat = bar['geometry']['coordinates'][1]
