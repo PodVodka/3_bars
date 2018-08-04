@@ -55,9 +55,10 @@ def parse_args():
     return args
 
 
-def get_bar_name(bar_dict):
-    return bar_dict['properties']['Attributes']['Name']
-
+def print_result(bar_description, bar):
+    bar_name = bar['properties']['Attributes']['Name']
+    bar_seat = bar['properties']['Attributes']['SeatsCount']
+    print(bar_description, bar_name, ';', bar_seat)
 
 if __name__ == '__main__':
     bars_filepath = parse_args().file_path
@@ -72,9 +73,9 @@ if __name__ == '__main__':
     longitude = input_coordinate('Введите значение долготы:')
     if longitude is None or latitude is None:
         exit('Введены некорректные данные. Программа завершена')
-    print('Самый большой бар:', get_bar_name(get_biggest_bar(bars)))
-    print('Самый маленький бар:', get_bar_name(get_smallest_bar(bars)))
-    print(
+    print_result('Самый большой бар:', get_biggest_bar(bars))
+    print_result('Самый маленький бар:', get_smallest_bar(bars))
+    print_result(
         'Ближайший к Вам бар:',
-        get_bar_name(get_closest_bar(bars, longitude, latitude))
+        get_closest_bar(bars, longitude, latitude)
     )
