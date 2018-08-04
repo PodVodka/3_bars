@@ -58,7 +58,7 @@ def parse_args():
 def print_result(bar_description, bar):
     bar_name = bar['properties']['Attributes']['Name']
     bar_seat = bar['properties']['Attributes']['SeatsCount']
-    print(bar_description, bar_name, ';', bar_seat)
+    print(bar_description, bar_name, '; количество мест:', bar_seat)
 
 if __name__ == '__main__':
     bars_filepath = parse_args().file_path
